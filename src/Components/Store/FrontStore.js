@@ -7,7 +7,7 @@ const FrontStore = () => {
   return (
     <div className="d-flex">
       <SideNavigationStore />
-      <div>
+      <div style={{ flex: 1, marginLeft: '60px', padding: '10px', }}>
         <ProductList />
       </div>
     </div>
