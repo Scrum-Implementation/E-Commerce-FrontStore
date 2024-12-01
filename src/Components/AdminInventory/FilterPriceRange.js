@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const FilterPriceRange = ({ onSelectPriceRange, onResetPriceRange }) => {
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   const handleApplyRange = () => {
     if (minPrice && maxPrice) {
@@ -11,34 +11,34 @@ const FilterPriceRange = ({ onSelectPriceRange, onResetPriceRange }) => {
   };
 
   const handleReset = () => {
-    setMinPrice('');
-    setMaxPrice('');
+    setMinPrice("");
+    setMaxPrice("");
     onResetPriceRange();
   };
 
   const styles = {
     button: {
-      height: '26px',
-      width: '150px',
-      fontSize: '12px',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'blue',
-      color: 'white',
+      height: "26px",
+      width: "150px",
+      fontSize: "12px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#003366",
+      color: "white",
     },
     dropdownMenu: {
-      minWidth: '150px',
+      minWidth: "150px",
     },
     dropdownItem: {
-      fontSize: '12px',
-      textAlign: 'center',
+      fontSize: "12px",
+      textAlign: "center",
     },
     input: {
-      width: '60px',
-      margin: '5px',
-      textAlign: 'center',
-      fontSize: '12px',
+      width: "60px",
+      margin: "5px",
+      textAlign: "center",
+      fontSize: "12px",
     },
   };
 
@@ -54,7 +54,11 @@ const FilterPriceRange = ({ onSelectPriceRange, onResetPriceRange }) => {
       >
         Price Range
       </button>
-      <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton" style={styles.dropdownMenu}>
+      <ul
+        className="dropdown-menu"
+        aria-labelledby="dropdownMenuButton"
+        style={styles.dropdownMenu}
+      >
         <li>
           <button
             className="dropdown-item"

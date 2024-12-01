@@ -44,7 +44,7 @@ const SideNavigationStore = () => {
     <>
       <nav
         className="navbar flex-column position-fixed top-0 start-0 h-100"
-        style={{ width: "60px", background: "#003366" }}
+        style={{ width: "60px", background: "#003366" }} // BLUE
       >
         <div className="navbar-nav" style={{ flex: 1 }}>
           <div
@@ -53,7 +53,7 @@ const SideNavigationStore = () => {
           >
             <i
               className="bi bi-person-circle"
-              style={{ fontSize: "32px", color: "#FFD700" }}
+              style={{ fontSize: "32px", color: "#FFD700" }} // YELLOW
             ></i>
           </div>
 
