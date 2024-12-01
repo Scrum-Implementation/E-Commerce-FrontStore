@@ -56,9 +56,28 @@ class CartController extends Controller
      */
     public function store(Request $request)
     {
-        //
-        
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer',
+        ]);
+    
+        $cart = Cart::firstOrCreate(
+            ['product_id' => $request->product_id],
+            ['quantity' => 1] 
+        );
+    
+        if ($cart->wasRecentlyCreated) {
+            $cart->quantity = $request->quantity; 
+        } else {
+            $cart->quantity += $request->quantity; 
+        }
+    
+        $cart->save();
+    
+        return response()->json(['message' => 'Product added to cart successfully.', 'cart' => $cart]);
     }
+        
+    
 
     /**
      * Display the specified resource.
@@ -74,15 +93,27 @@ class CartController extends Controller
     public function edit(Cart $cart)
     {
         //
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         //
-        
+        $request->validate(['quantity'=> 'required|integer|min:1']);
+        $cart = Cart::find($id);
+
+        if (!$cart) {
+            return response()->json(['message' => 'Cart item not found.'], 404);
+        }
+
+        $cart->quantity = $request -> quantity;
+        $cart ->save();
+        return response()->json(['message'=> 'Cart item updated successfully.']);
+
+
     }
 
     /**
