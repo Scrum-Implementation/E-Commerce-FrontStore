@@ -8,6 +8,7 @@ const SignUpForm = ({ triggerAlert }) => {
     email: "",
     password: "",
     confirmPassword: "",
+    contact_number: "",
   });
 
   const [error, setError] = useState("");
@@ -59,6 +60,18 @@ const SignUpForm = ({ triggerAlert }) => {
           placeholder="Email"
           name="email"
           value={userDetails.email}
+          onChange={handleInputChange}
+          required
+          className="mb-3"
+        />
+      </Form.Group>
+
+      <Form.Group controlId="formContactNumber">
+        <Form.Control
+          type="text"
+          placeholder="Contact Number"
+          name="contact_number"
+          value={userDetails.contact_number}
           onChange={handleInputChange}
           required
           className="mb-3"
