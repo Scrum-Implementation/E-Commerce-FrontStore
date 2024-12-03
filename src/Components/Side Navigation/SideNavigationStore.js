@@ -63,7 +63,7 @@ const SideNavigationStore = () => {
             data-bs-placement="right"
             title="Home"
           >
-            <Link to="/store/shop">
+            <Link to="/store/products">
               <i
                 className="bi bi-house-door-fill"
                 style={{ fontSize: "24px", color: "#FFD700" }}
@@ -98,6 +98,22 @@ const SideNavigationStore = () => {
               >
                 {cartCount}
               </span>
+            </Link>
+          </div>
+
+          <div
+            className="nav-link d-flex justify-content-center mb-2"
+            data-bs-toggle="tooltip"
+            data-bs-placement="right"
+            title="Checkout"
+          >
+            <Link to="/store/checkout">
+              <i
+                className="bi bi-credit-card-fill"
+                style={{ fontSize: "24px", color: "#FFD700" }}
+                onMouseEnter={(e) => (e.target.style.color = "gray")}
+                onMouseLeave={(e) => (e.target.style.color = "#FFD700")}
+              ></i>
             </Link>
           </div>
 
