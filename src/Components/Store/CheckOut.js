@@ -1,14 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import AuthService from "../../Services/AuthService";
 
 function Checkout() {
   const [address, setAddress] = useState({
-    name: 'Tine',
-    phone: '(+63) 9123456789',
-    location: 'Cabuyao, Laguna',
+    name: "",
+    phone: "",
+    location: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
+  const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isEditingPayment, setIsEditingPayment] = useState(false);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const userDetails = await AuthService.getUserDetails();
+        setAddress((prevAddress) => ({
+          ...prevAddress,
+          name: userDetails.name || "",
+          phone: userDetails.contact_number || "",
+        }));
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    fetchUserDetails();
+  }, []);
 
   const handleAddressChange = () => setIsEditingAddress(true);
   const saveAddress = () => setIsEditingAddress(false);
@@ -19,75 +38,58 @@ function Checkout() {
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', color: '#003366' }}>
-      {/* Delivery Address Section */}
-      <div style={{ borderBottom: 'px solid #FFD700', marginBottom: '20px' }}>
-        <h2 style={{ color: '#000', fontSize: '18px', fontWeight: 'bold' }}>Delivery Address</h2>
+    <div className="container py-4" style={{ color: "#003366" }}>
+      <div className="border-bottom mb-4">
+        <h2 className="text-dark font-weight-bold">Delivery Information</h2>
         {isEditingAddress ? (
           <div>
             <input
               type="text"
-              defaultValue={address.name}
+              className="form-control mb-3"
+              value={address.name}
               placeholder="Name"
               onChange={(e) => setAddress({ ...address, name: e.target.value })}
-              style={{ marginBottom: '10px', padding: '5px', width: '100%' }}
             />
             <input
               type="text"
-              defaultValue={address.phone}
+              className="form-control mb-3"
+              value={address.phone}
               placeholder="Phone"
-              onChange={(e) => setAddress({ ...address, phone: e.target.value })}
-              style={{ marginBottom: '10px', padding: '5px', width: '100%' }}
+              onChange={(e) =>
+                setAddress({ ...address, phone: e.target.value })
+              }
             />
             <input
               type="text"
-              defaultValue={address.location}
-              placeholder="Location"
-              onChange={(e) => setAddress({ ...address, location: e.target.value })}
-              style={{ marginBottom: '10px', padding: '5px', width: '100%' }}
+              className="form-control mb-3"
+              value={address.location}
+              placeholder="Add your location (required)"
+              onChange={(e) =>
+                setAddress({ ...address, location: e.target.value })
+              }
             />
+            {address.location === "" && (
+              <small className="text-danger">Location is required</small>
+            )}
             <button
               onClick={saveAddress}
-              style={{
-                backgroundColor: '#FFD700',
-                padding: '5px 10px',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
+              className="btn btn-warning text-dark w-100"
             >
               Save Address
             </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <div style={{ flex: 1, fontSize: '14px' }}>
+          <div className="d-flex align-items-center justify-content-between">
+            <div className="flex-grow-1">
               <strong>{address.name}</strong> <span>{address.phone}</span>
               <br />
-              <span>{address.location}</span>
+              <span>{address.location || "Add your location (required)"}</span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span
-                style={{
-                  backgroundColor: '#FFD700',
-                  color: '#003366',
-                  padding: '2px 8px',
-                  fontSize: '12px',
-                  borderRadius: '5px',
-                }}
-              >
-                Default
-              </span>
+            <div className="d-flex align-items-center gap-2">
+              <span className="badge badge-warning text-dark">Default</span>
               <button
                 onClick={handleAddressChange}
-                style={{
-                  background: 'none',
-                  color: '#003366',
-                  border: 'none',
-                  textDecoration: 'underline',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                }}
+                className="btn btn-link text-dark p-0"
               >
                 Change
               </button>
@@ -96,35 +98,47 @@ function Checkout() {
         )}
       </div>
 
-      {/* Products Ordered Section */}
-      <div style={{ borderBottom: '3px solid #FFD700', marginBottom: '20px' }}>
-        <h2 style={{ color: '#000', fontSize: '18px', fontWeight: 'bold' }}>Products Ordered</h2>
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', fontWeight: 'bold', borderBottom: '2px solid #FFD700' }}>
-          <div style={{ flex: 1, fontSize: '14px' }}></div>
-          <div style={{ width: '120px', textAlign: 'center' }}>Unit Price</div>
-          <div style={{ width: '80px', textAlign: 'center' }}>Quantity</div>
-          <div style={{ width: '100px', textAlign: 'center' }}>Subtotal</div>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0' }}>
-          <div style={{ flex: 1, fontSize: '14px' }}>
-            <p style={{ margin: 0, fontWeight: 'bold' }}>Casing Tecno Pova 2 TPU</p>
-            <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>Variation: pink</p>
+      <div className="border-bottom mb-4">
+        <h2 className="text-dark font-weight-bold">Products Ordered</h2>
+        <div className="d-flex justify-content-between py-2 font-weight-bold border-bottom border-warning">
+          <div className="flex-grow-1">Product</div>
+          <div className="text-center" style={{ width: "120px" }}>
+            Unit Price
           </div>
-          <div style={{ width: '120px', textAlign: 'center' }}>₱129</div>
-          <div style={{ width: '80px', textAlign: 'center' }}>1</div>
-          <div style={{ width: '100px', textAlign: 'center', fontWeight: 'bold' }}>₱129</div>
+          <div className="text-center" style={{ width: "80px" }}>
+            Quantity
+          </div>
+          <div className="text-center" style={{ width: "100px" }}>
+            Subtotal
+          </div>
+        </div>
+        <div className="d-flex justify-content-between py-2">
+          <div className="flex-grow-1">
+            <p className="m-0 font-weight-bold">Casing Tecno Pova 2 TPU</p>
+          </div>
+          <div className="text-center" style={{ width: "120px" }}>
+            ₱129
+          </div>
+          <div className="text-center" style={{ width: "80px" }}>
+            1
+          </div>
+          <div
+            className="text-center font-weight-bold"
+            style={{ width: "100px" }}
+          >
+            ₱129
+          </div>
         </div>
       </div>
 
-      {/* Payment Method Section */}
-      <div style={{ padding: '10px 20px', borderBottom: '2px solid #FFD700', backgroundColor: '#fff' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 'bold', color: '#000' }}>Payment Method</h2>
+      <div className="border-bottom mb-4 pb-3">
+        <h2 className="font-weight-bold text-dark">Payment Method</h2>
         {isEditingPayment ? (
           <div>
             <select
-              defaultValue={paymentMethod}
+              className="form-control mb-3"
+              value={paymentMethod}
               onChange={(e) => setPaymentMethod(e.target.value)}
-              style={{ marginBottom: '10px', padding: '5px', width: '100%' }}
             >
               <option value="Cash on Delivery">Cash on Delivery</option>
               <option value="Credit Card">Credit Card</option>
@@ -132,29 +146,17 @@ function Checkout() {
             </select>
             <button
               onClick={() => savePaymentMethod(paymentMethod)}
-              style={{
-                backgroundColor: '#FFD700',
-                padding: '5px 10px',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-              }}
+              className="btn btn-warning text-dark w-100"
             >
               Save Payment Method
             </button>
           </div>
         ) : (
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <p style={{ fontSize: '14px', color: '#666' }}>{paymentMethod}</p>
+          <div className="d-flex justify-content-between">
+            <p className="text-muted">{paymentMethod}</p>
             <button
               onClick={handlePaymentChange}
-              style={{
-                background: 'none',
-                color: '#000000',
-                textDecoration: 'underline',
-                cursor: 'pointer',
-                fontSize: '14px',
-              }}
+              className="btn btn-link text-dark p-0"
             >
               Change
             </button>
@@ -162,40 +164,21 @@ function Checkout() {
         )}
       </div>
 
-      {/* Payment Details */}
-      <div style={{ padding: '20px', fontSize: '14px', backgroundColor: '#FFFCF5', borderBottom: '2px solid #FFD700' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span>Merchandise Subtotal:</span>
-          <span>₱129</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span>Shipping:</span>
-          <span>₱40</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span>Voucher Discount:</span>
-          <span style={{ color: '#e63946' }}>-₱13</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', fontSize: '16px' }}>
+      <div
+        className="bg-light p-3 mb-4"
+        style={{ borderBottom: "2px solid #FFD700" }}
+      >
+        <div
+          className="d-flex justify-content-between font-weight-bold"
+          style={{ fontSize: "16px" }}
+        >
           <span>Total Payment:</span>
-          <span style={{ color: '#e63946' }}>₱156</span>
+          <span className="text-danger">₱156</span>
         </div>
       </div>
 
-      {/* Place Order Button */}
-      <div style={{ textAlign: 'right', padding: '20px' }}>
-        <button
-          style={{
-            backgroundColor: '#FFD700',
-            color: '#000',
-            border: 'none',
-            padding: '10px 20px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            borderRadius: '4px',
-            cursor: 'pointer',
-          }}
-        >
+      <div className="d-flex justify-content-end">
+        <button className="btn btn-warning text-dark px-4 py-2 font-weight-bold">
           Place Order
         </button>
       </div>
