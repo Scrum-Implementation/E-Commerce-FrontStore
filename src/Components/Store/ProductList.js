@@ -1,8 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const ProductList = ({ filteredData }) => {
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+
+  const handleAddToCart = () => {
+    setShowModal(false); // Close the modal
+    setShowAlert(true); // Show the success alert
+    setTimeout(() => setShowAlert(false), 3000);
+  };
+
   return (
-    <div className="d-flex flex-wrap justify-content-center mt-5">
+    <div className="d-flex flex-wrap justify-content-center mt-5 text-center">
+      {showAlert && (
+        <div
+          className="alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3"
+          style={{ zIndex: 1055, width: "30%" }}
+        >
+          <strong>{selectedProduct?.product_name}</strong> has been added to the
+          cart!
+        </div>
+      )}
+
       {filteredData.length > 0 ? (
         filteredData.map((product) => (
           <div
@@ -97,9 +118,10 @@ const ProductList = ({ filteredData }) => {
                   padding: "6px 12px",
                   fontWeight: "bold",
                 }}
-                onClick={() =>
-                  alert(`"${product.product_name}" has been added to the cart!`)
-                }
+                onClick={() => {
+                  setSelectedProduct(product);
+                  setShowModal(true);
+                }}
               >
                 ADD TO CART
               </button>
@@ -108,6 +130,47 @@ const ProductList = ({ filteredData }) => {
         ))
       ) : (
         <div>No products found with the selected filters.</div>
+      )}
+
+      {showModal && (
+        <div
+          className="modal fade show d-block centered"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Add to Cart</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowModal(false)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                Are you sure you want to add{" "}
+                <strong>{selectedProduct?.product_name}</strong> to the cart?
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleAddToCart}
+                >
+                  Yes, Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

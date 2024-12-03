@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import SideNavigationStore from "../Side Navigation/SideNavigationStore";
 import ProductList from "./ProductList";
 import Search from "../AdminInventory/Search";
 import FilterCategory from "../AdminInventory/FilterCategory";
@@ -16,7 +15,7 @@ const FrontStore = () => {
       try {
         const productData = await productService.getProducts();
         setProducts(productData);
-        setFilteredData(productData); // Initial data set
+        setFilteredData(productData);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -90,8 +89,6 @@ const FrontStore = () => {
 
   return (
     <div className="d-flex">
-      <SideNavigationStore />
-
       <div style={{ flex: 1, marginLeft: "60px", padding: "10px" }}>
         <div className="d-flex justify-content-center align-items-center my-3">
           <Search onSearch={handleSearch} className="mx-3" />
