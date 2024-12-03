@@ -1,15 +1,29 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import cartService from "../../Services/cartService";
 
 const ProductList = ({ filteredData }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [errorAlert, setErrorAlert] = useState(false);
 
-  const handleAddToCart = () => {
-    setShowModal(false); // Close the modal
-    setShowAlert(true); // Show the success alert
-    setTimeout(() => setShowAlert(false), 3000);
+  const handleAddToCart = async () => {
+    setShowModal(false);
+
+    try {
+      await cartService.addToCart({
+        product_id: selectedProduct.id,
+        product_name: selectedProduct.product_name,
+        price: selectedProduct.price,
+        quantity: 1,
+      });
+      setShowAlert(true); // Show the success alert
+      setTimeout(() => setShowAlert(false), 3000);
+    } catch (error) {
+      setErrorAlert(true);
+      setTimeout(() => setErrorAlert(false), 3000);
+    }
   };
 
   return (
@@ -21,6 +35,16 @@ const ProductList = ({ filteredData }) => {
         >
           <strong>{selectedProduct?.product_name}</strong> has been added to the
           cart!
+        </div>
+      )}
+
+      {errorAlert && (
+        <div
+          className="alert alert-danger position-fixed top-0 start-50 translate-middle-x mt-3"
+          style={{ zIndex: 1055, width: "30%" }}
+        >
+          There was an error adding{" "}
+          <strong>{selectedProduct?.product_name}</strong> to the cart.
         </div>
       )}
 
