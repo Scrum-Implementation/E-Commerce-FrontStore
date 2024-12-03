@@ -12,13 +12,13 @@ const LoginForm = ({ triggerAlert, onLogin }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
 
     try {
       const userData = await AuthService.login(email, password);
       if (userData) {
         onLogin();
-        navigate("/dashboard");
+        navigate("/store/products");
       }
     } catch (error) {
       setAlert({
@@ -28,7 +28,7 @@ const LoginForm = ({ triggerAlert, onLogin }) => {
       });
     }
 
-    setLoading(false); // Stop loading
+    setLoading(false);
   };
 
   useEffect(() => {

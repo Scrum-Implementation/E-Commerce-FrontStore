@@ -6,9 +6,10 @@ import {
   useLocation,
   Navigate,
 } from "react-router-dom";
-import Dashboard from "./Components/AdminInventory/Dashboard";
-import Inventory from "./Components/AdminInventory/Inventory";
-import SideNavigationAdmin from "./Components/Side Navigation/SideNavigation";
+import FrontStore from "./Components/store/FrontStore";
+import Cart from "./Components/store/Cart";
+import CheckOut from "./Components/store/CheckOut";
+import SideNavigationStore from "./Components/Side Navigation/SideNavigationStore";
 import LSFrame from "./Components/Auth/LSFrame";
 import AuthService from "./Services/AuthService";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -60,16 +61,16 @@ const Main = () => {
 
   return (
     <div className="d-flex small">
-      {!isAuthPage && <SideNavigationAdmin />}
+      {!isAuthPage && <SideNavigationStore />}
       <div
         className="content d-flex justify-content-center"
-        style={{ width: "100%", backgroundColor: "#003366" }}
+        style={{ width: "100%" /*background: "#FFD700"*/ }}
       >
         <Routes>
           <Route
             path="/"
             element={
-              <Navigate to={isAuthenticated ? "/dashboard" : "/login"} />
+              <Navigate to={isAuthenticated ? "/store/products" : "/login"} />
             }
           />
           <Route
@@ -78,12 +79,16 @@ const Main = () => {
           />
           <Route path="/signup" element={<LSFrame />} />
           <Route
-            path="/dashboard"
-            element={<ProtectedRoute element={<Dashboard />} />}
+            path="/store/products"
+            element={<ProtectedRoute element={<FrontStore />} />}
           />
           <Route
-            path="/inventory"
-            element={<ProtectedRoute element={<Inventory />} />}
+            path="/store/cart"
+            element={<ProtectedRoute element={<Cart />} />}
+          />
+          <Route
+            path="/store/checkout"
+            element={<ProtectedRoute element={<CheckOut />} />}
           />
         </Routes>
       </div>
