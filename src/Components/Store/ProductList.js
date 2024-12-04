@@ -74,8 +74,8 @@ const ProductList = ({ filteredData }) => {
               backgroundColor: "#fff",
               border: "none",
               transition: "transform 0.3s ease-in-out",
-              height: "350px",
-              minWidth: "250px",
+              height: "320px",
+              minWidth: "350px",
               display: "flex",
               flexDirection: "column",
             }}
