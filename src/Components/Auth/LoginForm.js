@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const LoginForm = ({ triggerAlert, onLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", type: "", show: false });
   const navigate = useNavigate();
 
@@ -18,7 +18,14 @@ const LoginForm = ({ triggerAlert, onLogin }) => {
       const userData = await AuthService.login(email, password);
       if (userData) {
         onLogin();
-        navigate("/store/products");
+
+        if (userData.role === "admin") {
+          navigate("/admin/inventory");
+        } else if (userData.role === "user") {
+          navigate("/store/products");
+        } else {
+          throw new Error("Invalid role");
+        }
       }
     } catch (error) {
       setAlert({

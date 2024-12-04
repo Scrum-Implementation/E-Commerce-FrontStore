@@ -3,14 +3,13 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useLocation,
   Navigate,
 } from "react-router-dom";
 import FrontStore from "./Components/store/FrontStore";
 import Cart from "./Components/store/Cart";
 import CheckOut from "./Components/store/CheckOut";
-import SideNavigationStore from "./Components/Side Navigation/SideNavigationStore";
 import LSFrame from "./Components/Auth/LSFrame";
+import AdminInventory from "./Components/AdminInventory/Inventory";
 import AuthService from "./Services/AuthService";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -23,17 +22,18 @@ const App = () => {
 };
 
 const Main = () => {
-  const location = useLocation();
-  const isAuthPage =
-    location.pathname === "/login" || location.pathname === "/signup";
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [role, setRole] = useState(""); // Track user role (admin or user)
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const authStatus = await AuthService.isAuthenticated();
+        if (authStatus) {
+          const userDetails = await AuthService.getUserDetails();
+          setRole(userDetails.role); // Set role after authentication
+        }
         setIsAuthenticated(authStatus);
       } catch (error) {
         console.error("Authentication check failed:", error);
@@ -45,7 +45,6 @@ const Main = () => {
     checkAuth();
   }, []);
 
-  // Render Bootstrap spinner while checking authentication.
   const ProtectedRoute = ({ element }) => {
     if (loading) {
       return (
@@ -61,16 +60,23 @@ const Main = () => {
 
   return (
     <div className="d-flex small">
-      {!isAuthPage && <SideNavigationStore />}
       <div
         className="content d-flex justify-content-center"
-        style={{ width: "100%" /*background: "#FFD700"*/ }}
+        style={{ width: "100%" }}
       >
         <Routes>
           <Route
             path="/"
             element={
-              <Navigate to={isAuthenticated ? "/store/products" : "/login"} />
+              <Navigate
+                to={
+                  isAuthenticated
+                    ? role === "admin"
+                      ? "/admin/inventory"
+                      : "/store/products"
+                    : "/login"
+                }
+              />
             }
           />
           <Route
@@ -78,6 +84,14 @@ const Main = () => {
             element={<LSFrame onLogin={() => setIsAuthenticated(true)} />}
           />
           <Route path="/signup" element={<LSFrame />} />
+
+          {/* Admin Routes */}
+          <Route
+            path="/admin/inventory"
+            element={<ProtectedRoute element={<AdminInventory />} />}
+          />
+
+          {/* User Routes */}
           <Route
             path="/store/products"
             element={<ProtectedRoute element={<FrontStore />} />}
