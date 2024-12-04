@@ -5,6 +5,7 @@ import FilterCategory from "../AdminInventory/FilterCategory";
 import FilterPriceRange from "../AdminInventory/FilterPriceRange";
 import Sorting from "../AdminInventory/SortCategoryAndPrice";
 import productService from "../../Services/productService";
+import SideNavigationStore from "../Side Navigation/SideNavigationStore";
 
 const FrontStore = () => {
   const [products, setProducts] = useState([]);
@@ -89,6 +90,7 @@ const FrontStore = () => {
 
   return (
     <div className="d-flex">
+      <SideNavigationStore />
       <div style={{ flex: 1, marginLeft: "60px", padding: "10px" }}>
         <div className="d-flex justify-content-center align-items-center my-3">
           <Search onSearch={handleSearch} className="mx-3" />

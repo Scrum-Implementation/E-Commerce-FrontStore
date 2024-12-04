@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AuthService from "../../Services/AuthService";
 import cartService from "../../Services/cartService";
+import SideNavigationStore from "../Side Navigation/SideNavigationStore";
 
 function Checkout() {
   const [address, setAddress] = useState({
@@ -15,7 +16,7 @@ function Checkout() {
   const [cartItems, setCartItems] = useState([]);
   const [grandTotal, setGrandTotal] = useState(0);
   const [showModal, setShowModal] = useState(false);
-  const [successMessage, setSuccessMessage] = useState(""); // Added state for success message
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -59,8 +60,13 @@ function Checkout() {
   };
 
   return (
-    <div className="container py-4" style={{ color: "#003366" }}>
-      {successMessage && ( // Conditionally render the success message
+    <div
+      className="container py-4"
+      style={{ color: "#003366", marginLeft: "100px", marginRight: "40px" }}
+    >
+      <SideNavigationStore />
+
+      {successMessage && (
         <div className="alert alert-success text-center" role="alert">
           {successMessage}
         </div>
@@ -203,17 +209,18 @@ function Checkout() {
             </button>
           </div>
         ) : (
-       <div className="d-flex justify-content-between align-items-center ms-5 me-5">
-       <p style={{ fontSize: "1.2rem", marginBottom: "0" }}>{paymentMethod}</p>
-       <button
-    onClick={handlePaymentChange}
-    className="btn btn-link text-dark p-0"
-    style={{ fontSize: "1rem" }}
-    >
-      Change
-     </button>
-     </div>
-
+          <div className="d-flex justify-content-between align-items-center ms-5 me-5">
+            <p style={{ fontSize: "1.2rem", marginBottom: "0" }}>
+              {paymentMethod}
+            </p>
+            <button
+              onClick={handlePaymentChange}
+              className="btn btn-link text-dark p-0"
+              style={{ fontSize: "1rem" }}
+            >
+              Change
+            </button>
+          </div>
         )}
       </div>
 
@@ -244,16 +251,24 @@ function Checkout() {
       {showModal && (
         <div
           className="modal show"
+          style={{ display: "block" }}
           tabIndex="-1"
-          style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+          role="dialog"
         >
-          <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Confirm Your Order</h5>
+                <h5 className="modal-title">Confirm Order</h5>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setShowModal(false)}
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
               </div>
               <div className="modal-body">
-                <p>Are you sure you want to place this order?</p>
+                <p>Are you sure you want to place the order?</p>
               </div>
               <div className="modal-footer">
                 <button
@@ -261,14 +276,14 @@ function Checkout() {
                   className="btn btn-secondary"
                   onClick={() => setShowModal(false)}
                 >
-                  Cancel
+                  Close
                 </button>
                 <button
                   type="button"
                   className="btn btn-primary"
                   onClick={handlePlaceOrder}
                 >
-                  Place Order
+                  Confirm Order
                 </button>
               </div>
             </div>

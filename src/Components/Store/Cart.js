@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Container, Table, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom"; // For navigation to checkout page
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import cartService from "../../Services/cartService";
+import SideNavigationStore from "../Side Navigation/SideNavigationStore";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
@@ -22,9 +23,9 @@ const Cart = () => {
 
       const cartItems = response.items || [];
       // Ensure that the price is the unit price and not total price
-      const correctedCartItems = cartItems.map(item => ({
+      const correctedCartItems = cartItems.map((item) => ({
         ...item,
-        total_price_per_product: item.total_price_per_product / item.quantity
+        total_price_per_product: item.total_price_per_product / item.quantity,
       }));
 
       setCart(correctedCartItems);
@@ -36,7 +37,10 @@ const Cart = () => {
   };
 
   const calculateTotal = () =>
-    cart.reduce((total, item) => total + item.total_price_per_product * item.quantity, 0);
+    cart.reduce(
+      (total, item) => total + item.total_price_per_product * item.quantity,
+      0
+    );
 
   // Handle quantity change
   const handleQuantityChange = async (id, type) => {
@@ -80,18 +84,20 @@ const Cart = () => {
     }
   };
 
-  // Navigate to checkout page
   const handleCheckout = () => {
     navigate("/store/checkout"); // Redirect to the checkout page
   };
 
   return (
     <Container className="py-4">
+      <SideNavigationStore />
       <div
         style={{
           backgroundColor: "#F8F9FA",
           padding: "20px",
           borderRadius: "10px",
+          marginLeft: "100px",
+          marginRight: "40px",
         }}
       >
         <div
@@ -127,7 +133,8 @@ const Cart = () => {
                 {cart.map((item) => (
                   <tr key={item.id}>
                     <td>{item.product_name}</td>
-                    <td>₱{item.total_price_per_product}</td> {/* Static price */}
+                    <td>₱{item.total_price_per_product}</td>{" "}
+                    {/* Static price */}
                     <td>
                       <div className="d-flex justify-content-between align-items-center">
                         <Button
