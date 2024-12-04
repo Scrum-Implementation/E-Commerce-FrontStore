@@ -14,6 +14,7 @@ function Checkout() {
   const [isEditingPayment, setIsEditingPayment] = useState(false);
   const [cartItems, setCartItems] = useState([]); // State to hold cart items
   const [grandTotal, setGrandTotal] = useState(0); // State to hold grand total
+  const [showModal, setShowModal] = useState(false); // State to handle modal visibility
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -49,6 +50,11 @@ function Checkout() {
   const savePaymentMethod = (method) => {
     setPaymentMethod(method);
     setIsEditingPayment(false);
+  };
+
+  const handlePlaceOrder = () => {
+    console.log("Order placed successfully!");
+    setShowModal(false);
   };
 
   return (
@@ -221,10 +227,48 @@ function Checkout() {
       </div>
 
       <div className="d-flex justify-content-end">
-        <button className="btn btn-warning text-dark px-4 py-2  me-5">
+        <button
+          className="btn btn-warning text-dark px-4 py-2 me-5"
+          onClick={() => setShowModal(true)}
+        >
           Place Order
         </button>
       </div>
+
+      {showModal && (
+        <div
+          className="modal show"
+          tabIndex="-1"
+          style={{ display: "block", backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Confirm Your Order</h5>
+              </div>
+              <div className="modal-body">
+                <p>Are you sure you want to place this order?</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handlePlaceOrder}
+                >
+                  Place Order
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
