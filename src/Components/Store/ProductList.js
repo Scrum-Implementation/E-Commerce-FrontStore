@@ -7,8 +7,15 @@ const ProductList = ({ filteredData }) => {
   const [showModal, setShowModal] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [errorAlert, setErrorAlert] = useState(false);
+  const [viewFullDescription, setViewFullDescription] = useState(null);
 
   const handleAddToCart = async () => {
+    if (selectedProduct.quantity <= 0) {
+      setErrorAlert(true);
+      setTimeout(() => setErrorAlert(false), 3000);
+      return;
+    }
+
     setShowModal(false);
 
     try {
@@ -18,12 +25,19 @@ const ProductList = ({ filteredData }) => {
         price: selectedProduct.price,
         quantity: 1,
       });
-      setShowAlert(true); // Show the success alert
+      setShowAlert(true);
       setTimeout(() => setShowAlert(false), 3000);
     } catch (error) {
       setErrorAlert(true);
       setTimeout(() => setErrorAlert(false), 3000);
     }
+  };
+
+  // Helper function to truncate text
+  const truncateDescription = (description) => {
+    return description.length > 350
+      ? description.substring(0, 350) + "..."
+      : description;
   };
 
   return (
@@ -52,7 +66,7 @@ const ProductList = ({ filteredData }) => {
         filteredData.map((product) => (
           <div
             key={product.id}
-            className="card col-12 col-sm-6 col-md-3 col-lg-3 m-3"
+            className="card col-12 col-sm-4 col-md-3 col-lg-3 m-3"
             style={{
               borderRadius: "8px",
               boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
@@ -60,8 +74,10 @@ const ProductList = ({ filteredData }) => {
               backgroundColor: "#fff",
               border: "none",
               transition: "transform 0.3s ease-in-out",
-              height: "300px",
-              maxWidth: "280px",
+              height: "350px",
+              minWidth: "250px",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <div
@@ -84,7 +100,7 @@ const ProductList = ({ filteredData }) => {
 
             <div
               className="card-body"
-              style={{ padding: "10px", position: "relative" }}
+              style={{ padding: "10px", position: "relative", flexGrow: 1 }}
             >
               <div
                 style={{
@@ -100,16 +116,52 @@ const ProductList = ({ filteredData }) => {
                 {product.category}
               </div>
 
-              <p
-                className="card-text"
-                style={{ fontSize: "0.85rem", color: "#555" }}
+              <div
+                className="product-description"
+                style={{
+                  fontSize: "0.85rem",
+                  color: "#555",
+                  maxHeight: "150px",
+                  overflowY: "auto",
+                  position: "relative",
+                }}
               >
-                {product.description}
-              </p>
+                <span>
+                  {viewFullDescription === product.id
+                    ? product.description
+                    : truncateDescription(product.description)}
+                </span>
+                {product.description.length > 350 && (
+                  <button
+                    className="btn btn-link view-more"
+                    style={{
+                      color: "#003366",
+                      cursor: "pointer",
+                      display: "inline-block",
+                      padding: "0",
+                      fontSize: "0.85rem",
+                    }}
+                    onClick={() =>
+                      setViewFullDescription(
+                        viewFullDescription === product.id ? null : product.id
+                      )
+                    }
+                  >
+                    {viewFullDescription === product.id
+                      ? "Show Less"
+                      : "View More"}
+                  </button>
+                )}
+              </div>
 
               <div
                 className="position-absolute"
-                style={{ bottom: "10px", right: "10px", fontSize: "0.75rem" }}
+                style={{
+                  bottom: "10px",
+                  right: "10px",
+                  fontSize: "0.75rem",
+                  marginTop: "10px",
+                }}
               >
                 <small className="text-muted">Stock: {product.quantity}</small>
               </div>
