@@ -11,12 +11,15 @@ import Search from "./Search";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Sorting from "./SortCategoryAndPrice";
 import SortStock from "./SortQuantity";
+import { useNavigate } from "react-router-dom";
 
 const Inventory = () => {
   const [showDialogProductForm, setShowDialogProductForm] = useState(false);
   const [inventoryData, setInventoryData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -114,23 +117,44 @@ const Inventory = () => {
     setFilteredData(sorted);
   };
 
+  const handleLogout = () => {
+    navigate("/login");
+  };
+
   return (
-    <div className="container">
+    <div className="container" style={{ position: "relative" }}>
+      <button
+        className="btn btn-outline-danger"
+        style={{
+          backgroundColor: "#FF6347",
+          color: "#ffffff",
+          padding: "5px 15px",
+          position: "absolute",
+          top: "10px",
+          right: "10px",
+        }}
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
+
       <div className="d-flex justify-content-center align-items-center mb-3">
-        <AddProduct onClick={handleOpenAddProductClick} />
-        <Search onSearch={handleSearch} className="mx-3" />
-        <button
-          className="btn btn-outline-secondary"
-          style={{
-            backgroundColor: "#FFD700",
-            color: "#003366",
-            borderColor: "#003366",
-            padding: "2px 16px",
-          }}
-          onClick={fetchProducts}
-        >
-          <i className="bi bi-arrow-clockwise"></i>
-        </button>
+        <div className="d-flex align-items-center">
+          <AddProduct onClick={handleOpenAddProductClick} />
+          <Search onSearch={handleSearch} className="mx-3" />
+          <button
+            className="btn btn-outline-secondary"
+            style={{
+              backgroundColor: "#FFD700",
+              color: "#003366",
+              borderColor: "#003366",
+              padding: "2px 16px",
+            }}
+            onClick={fetchProducts}
+          >
+            <i className="bi bi-arrow-clockwise"></i>
+          </button>
+        </div>
       </div>
 
       <div className="d-flex justify-content-center align-items-center mb-3">
