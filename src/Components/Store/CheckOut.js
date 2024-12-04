@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AuthService from "../../Services/AuthService";
+import cartService from "../../Services/cartService";
 
 function Checkout() {
   const [address, setAddress] = useState({
@@ -11,6 +12,8 @@ function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isEditingPayment, setIsEditingPayment] = useState(false);
+  const [cartItems, setCartItems] = useState([]); // State to hold cart items
+  const [grandTotal, setGrandTotal] = useState(0); // State to hold grand total
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -26,7 +29,18 @@ function Checkout() {
       }
     };
 
+    const fetchCartItems = async () => {
+      try {
+        const data = await cartService.getCarts();
+        setCartItems(data.items); // Set the fetched cart items
+        setGrandTotal(data.grand_total); // Set the grand total
+      } catch (error) {
+        console.error("Error fetching cart items:", error);
+      }
+    };
+
     fetchUserDetails();
+    fetchCartItems();
   }, []);
 
   const handleAddressChange = () => setIsEditingAddress(true);
@@ -101,34 +115,58 @@ function Checkout() {
       <div className="border-bottom mb-4">
         <h2 className="text-dark font-weight-bold">Products Ordered</h2>
         <div className="d-flex justify-content-between py-2 font-weight-bold border-bottom border-warning">
-          <div className="flex-grow-1">Product</div>
-          <div className="text-center" style={{ width: "120px" }}>
+          <div
+            className="flex-grow-1 ms-5"
+            style={{ fontSize: "1.2rem", fontWeight: "bold" }}
+          >
+            Product
+          </div>
+          <div
+            className="text-center me-2"
+            style={{ width: "120px", fontSize: "1.2rem", fontWeight: "bold" }}
+          >
             Unit Price
           </div>
-          <div className="text-center" style={{ width: "80px" }}>
+          <div
+            className="text-center me-2"
+            style={{ width: "80px", fontSize: "1.2rem", fontWeight: "bold" }}
+          >
             Quantity
           </div>
-          <div className="text-center" style={{ width: "100px" }}>
+          <div
+            className="text-center  me-5"
+            style={{ width: "100px", fontSize: "1.2rem", fontWeight: "bold" }}
+          >
             Subtotal
           </div>
         </div>
-        <div className="d-flex justify-content-between py-2">
-          <div className="flex-grow-1">
-            <p className="m-0 font-weight-bold">Casing Tecno Pova 2 TPU</p>
-          </div>
-          <div className="text-center" style={{ width: "120px" }}>
-            ₱129
-          </div>
-          <div className="text-center" style={{ width: "80px" }}>
-            1
-          </div>
-          <div
-            className="text-center font-weight-bold"
-            style={{ width: "100px" }}
-          >
-            ₱129
-          </div>
-        </div>
+
+        {cartItems.length === 0 ? (
+          <div className="text-center py-2">No items in cart.</div>
+        ) : (
+          cartItems.map((item, index) => (
+            <div key={item.id}>
+              <div className="d-flex justify-content-between py-2 me-5">
+                <div className="flex-grow-1 ms-5">
+                  <p className="m-0">{item.product_name}</p>
+                </div>
+                <div className="text-center me-2" style={{ width: "120px" }}>
+                  ₱{item.total_price_per_product / item.quantity}
+                </div>
+                <div className="text-center me-2" style={{ width: "80px" }}>
+                  x{item.quantity}
+                </div>
+                <div
+                  className="text-center font-weight-bold me-2"
+                  style={{ width: "100px" }}
+                >
+                  ₱{item.total_price_per_product}
+                </div>
+              </div>
+              {index < cartItems.length - 1 && <hr className="my-2" />}
+            </div>
+          ))
+        )}
       </div>
 
       <div className="border-bottom mb-4 pb-3">
@@ -152,11 +190,14 @@ function Checkout() {
             </button>
           </div>
         ) : (
-          <div className="d-flex justify-content-between">
-            <p className="text-muted">{paymentMethod}</p>
+          <div className="d-flex justify-content-start">
+            <p className="ms-5 me-5" style={{ fontSize: "1.2rem" }}>
+              {paymentMethod}
+            </p>
             <button
               onClick={handlePaymentChange}
-              className="btn btn-link text-dark p-0"
+              className="btn btn-link text-dark p-0 me-5"
+              style={{ fontSize: "1rem" }}
             >
               Change
             </button>
@@ -169,16 +210,18 @@ function Checkout() {
         style={{ borderBottom: "2px solid #FFD700" }}
       >
         <div
-          className="d-flex justify-content-between font-weight-bold"
-          style={{ fontSize: "16px" }}
+          className="d-flex justify-content-between ms-5"
+          style={{ fontSize: "1.2rem" }}
         >
           <span>Total Payment:</span>
-          <span className="text-danger">₱156</span>
+          <span className="text-danger me-5" style={{ fontSize: "1.2rem" }}>
+            ₱{grandTotal}
+          </span>
         </div>
       </div>
 
       <div className="d-flex justify-content-end">
-        <button className="btn btn-warning text-dark px-4 py-2 font-weight-bold">
+        <button className="btn btn-warning text-dark px-4 py-2  me-5">
           Place Order
         </button>
       </div>
