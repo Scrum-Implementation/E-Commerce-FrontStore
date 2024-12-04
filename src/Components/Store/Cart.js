@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Container, Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // For navigation to checkout page
-import cartService from "../../Services/cartService"; // Import the cart service
+import "bootstrap/dist/css/bootstrap.min.css";
+import cartService from "../../Services/cartService";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
-  const [error, setError] = useState(null); // State to track error messages
+  const [error, setError] = useState(null);
   const navigate = useNavigate(); // To navigate programmatically
 
   // Fetch cart items on component load
@@ -17,8 +18,16 @@ const Cart = () => {
   const fetchCartItems = async () => {
     try {
       const response = await cartService.getCarts();
+      console.log("Fetched cart items:", response);
+
       const cartItems = response.items || [];
-      setCart(cartItems);
+      // Ensure that the price is the unit price and not total price
+      const correctedCartItems = cartItems.map(item => ({
+        ...item,
+        total_price_per_product: item.total_price_per_product / item.quantity
+      }));
+
+      setCart(correctedCartItems);
       setError(null);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -34,22 +43,26 @@ const Cart = () => {
     try {
       let updatedCart = [...cart];
       const index = updatedCart.findIndex((item) => item.id === id);
+
       if (index !== -1) {
+        const currentQuantity = updatedCart[index].quantity;
+        const pricePerUnit = updatedCart[index].total_price_per_product; // Keep the unit price fixed
+
+        // Adjust quantity without affecting price
         if (type === "increase") {
-          updatedCart[index].quantity += 1;
-        } else if (type === "decrease" && updatedCart[index].quantity > 1) {
-          updatedCart[index].quantity -= 1;
+          updatedCart[index].quantity = currentQuantity + 1;
+        } else if (type === "decrease" && currentQuantity > 1) {
+          updatedCart[index].quantity = currentQuantity - 1;
         }
+
+        setCart(updatedCart); // Update local state
+
+        // Update backend with only the new quantity
+        await cartService.updateQuantity(id, updatedCart[index].quantity);
+
+        // Ensure price per unit remains unchanged
+        updatedCart[index].total_price_per_product = pricePerUnit;
       }
-
-      // Update the cart in the frontend state
-      setCart(updatedCart);
-
-      // Update the cart on the server
-      await cartService.updateQuantity(id, updatedCart[index].quantity);
-
-      // Re-fetch the cart after the update to reflect changes in the backend
-      await fetchCartItems();
     } catch (error) {
       console.error("Error updating quantity:", error);
       setError("Failed to update quantity. Please try again.");
@@ -105,7 +118,7 @@ const Cart = () => {
               <thead style={{ backgroundColor: "#003366", color: "#FFFFFF" }}>
                 <tr>
                   <th>Item</th>
-                  <th>Price</th>
+                  <th>Price (₱)</th>
                   <th>Quantity</th>
                   <th>Actions</th>
                 </tr>
@@ -114,13 +127,15 @@ const Cart = () => {
                 {cart.map((item) => (
                   <tr key={item.id}>
                     <td>{item.product_name}</td>
-                    <td>₱{item.total_price_per_product}</td>
+                    <td>₱{item.total_price_per_product}</td> {/* Static price */}
                     <td>
                       <div className="d-flex justify-content-between align-items-center">
                         <Button
                           variant="outline-secondary"
                           size="sm"
-                          onClick={() => handleQuantityChange(item.id, "decrease")}
+                          onClick={() =>
+                            handleQuantityChange(item.id, "decrease")
+                          }
                           style={{
                             backgroundColor: "#FFD700",
                             color: "#003366",
@@ -133,7 +148,9 @@ const Cart = () => {
                         <Button
                           variant="outline-secondary"
                           size="sm"
-                          onClick={() => handleQuantityChange(item.id, "increase")}
+                          onClick={() =>
+                            handleQuantityChange(item.id, "increase")
+                          }
                           style={{
                             backgroundColor: "#FFD700",
                             color: "#003366",
@@ -165,9 +182,8 @@ const Cart = () => {
 
             <hr style={{ borderColor: "#003366", borderWidth: "2px" }} />
 
-            {/* Aligning total and checkout button to the right */}
             <div className="d-flex justify-content-end align-items-center">
-              <h4 style={{ marginRight: "20px" }}>Total: ₱{calculateTotal()}</h4>
+              <h4 className="me-3">Total: ₱{calculateTotal()}</h4>
               <Button
                 variant="primary"
                 onClick={handleCheckout}

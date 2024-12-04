@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import cartService from "../../Services/cartService";
 
 const SideNavigationStore = () => {
   const navigate = useNavigate();
@@ -21,7 +22,17 @@ const SideNavigationStore = () => {
   };
 
   useEffect(() => {
-    setCartCount(0);
+    const fetchCartCount = async () => {
+      try {
+        const carts = await cartService.getCarts();
+        console.log("Fetched carts:", carts);
+        setCartCount(carts.items.length);
+      } catch (error) {
+        console.error("Error fetching cart count:", error);
+      }
+    };
+
+    fetchCartCount(); // Call the function to fetch cart data
   }, []);
 
   useEffect(() => {
@@ -87,6 +98,7 @@ const SideNavigationStore = () => {
                 onMouseLeave={(e) => (e.target.style.color = "#FFD700")}
               ></i>
 
+              {/* Ensure the cart badge is visible */}
               <span
                 className="position-absolute top-0 start-100 translate-middle badge rounded-pill"
                 style={{
@@ -96,7 +108,7 @@ const SideNavigationStore = () => {
                   border: "1px solid #003366",
                 }}
               >
-                {cartCount}
+                {cartCount > 0 ? cartCount : "0"} {/* Show 0 if no items */}
               </span>
             </Link>
           </div>
