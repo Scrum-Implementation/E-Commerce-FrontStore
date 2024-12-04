@@ -32,7 +32,7 @@ const SideNavigationStore = () => {
       }
     };
 
-    fetchCartCount(); // Call the function to fetch cart data
+    fetchCartCount();
   }, []);
 
   useEffect(() => {
@@ -65,7 +65,7 @@ const SideNavigationStore = () => {
             <i
               className="bi bi-person-circle"
               style={{ fontSize: "32px", color: "#FFD700" }} // YELLOW
-            ></i>
+            />
           </div>
 
           <div
@@ -78,9 +78,7 @@ const SideNavigationStore = () => {
               <i
                 className="bi bi-house-door-fill"
                 style={{ fontSize: "24px", color: "#FFD700" }}
-                onMouseEnter={(e) => (e.target.style.color = "gray")}
-                onMouseLeave={(e) => (e.target.style.color = "#FFD700")}
-              ></i>
+              />
             </Link>
           </div>
 
@@ -94,11 +92,7 @@ const SideNavigationStore = () => {
               <i
                 className="bi bi-cart"
                 style={{ fontSize: "24px", color: "#FFD700" }}
-                onMouseEnter={(e) => (e.target.style.color = "gray")}
-                onMouseLeave={(e) => (e.target.style.color = "#FFD700")}
-              ></i>
-
-              {/* Ensure the cart badge is visible */}
+              />
               <span
                 className="position-absolute top-0 start-100 translate-middle badge rounded-pill"
                 style={{
@@ -108,7 +102,7 @@ const SideNavigationStore = () => {
                   border: "1px solid #003366",
                 }}
               >
-                {cartCount > 0 ? cartCount : "0"} {/* Show 0 if no items */}
+                {cartCount > 0 ? cartCount : "0"}
               </span>
             </Link>
           </div>
@@ -123,9 +117,7 @@ const SideNavigationStore = () => {
               <i
                 className="bi bi-credit-card-fill"
                 style={{ fontSize: "24px", color: "#FFD700" }}
-                onMouseEnter={(e) => (e.target.style.color = "gray")}
-                onMouseLeave={(e) => (e.target.style.color = "#FFD700")}
-              ></i>
+              />
             </Link>
           </div>
 
@@ -140,9 +132,7 @@ const SideNavigationStore = () => {
             <i
               className="bi bi-box-arrow-left"
               style={{ fontSize: "24px", color: "#FFD700" }}
-              onMouseEnter={(e) => (e.target.style.color = "gray")}
-              onMouseLeave={(e) => (e.target.style.color = "#FFD700")}
-            ></i>
+            />
           </div>
         </div>
       </nav>
@@ -151,11 +141,9 @@ const SideNavigationStore = () => {
         <Modal.Header closeButton>
           <Modal.Title>Confirm Logout</Modal.Title>
         </Modal.Header>
-
         <Modal.Body className="text-center">
           <p>Are you sure you want to log out?</p>
         </Modal.Body>
-
         <Modal.Footer className="d-flex justify-content-center">
           <Button variant="danger" onClick={handleLogout}>
             Logout
