@@ -1,3 +1,4 @@
+// cartService.js
 import Api from "./Api";
 
 const cartService = {
@@ -27,6 +28,16 @@ const cartService = {
     } catch (error) {
       console.error("Error removing from cart:", error);
       throw new Error("Could not remove product from cart.");
+    }
+  },
+
+  updateQuantity: async (id, quantity) => {
+    try {
+      const response = await Api.put(`/carts/${id}`, { quantity });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating cart quantity:", error);
+      throw new Error("Could not update product quantity.");
     }
   },
 };
