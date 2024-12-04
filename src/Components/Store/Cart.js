@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Container, Table, Button, Badge } from "react-bootstrap";
+import { Container, Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom"; // For navigation to checkout page
-import "bootstrap/dist/css/bootstrap.min.css";
-import cartService from "../../Services/cartService";
+import cartService from "../../Services/cartService"; // Import the cart service
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
-  const [error, setError] = useState(null);
-  const [cartCount, setCartCount] = useState(0); // State to track cart count
+  const [error, setError] = useState(null); // State to track error messages
   const navigate = useNavigate(); // To navigate programmatically
 
   // Fetch cart items on component load
@@ -19,11 +17,8 @@ const Cart = () => {
   const fetchCartItems = async () => {
     try {
       const response = await cartService.getCarts();
-      console.log("Fetched cart items:", response); // Check the structure of response
-
       const cartItems = response.items || [];
       setCart(cartItems);
-      setCartCount(cartItems.reduce((total, item) => total + item.quantity, 0)); // Update cart count
       setError(null);
     } catch (error) {
       console.error("Error fetching cart items:", error);
@@ -47,11 +42,14 @@ const Cart = () => {
         }
       }
 
+      // Update the cart in the frontend state
       setCart(updatedCart);
-      setCartCount(updatedCart.reduce((total, item) => total + item.quantity, 0)); // Update cart count
 
       // Update the cart on the server
       await cartService.updateQuantity(id, updatedCart[index].quantity);
+
+      // Re-fetch the cart after the update to reflect changes in the backend
+      await fetchCartItems();
     } catch (error) {
       console.error("Error updating quantity:", error);
       setError("Failed to update quantity. Please try again.");
@@ -165,24 +163,22 @@ const Cart = () => {
               </tbody>
             </Table>
 
-            {/* Gold-colored line below the table */}
             <hr style={{ borderColor: "#003366", borderWidth: "2px" }} />
 
-            <div className="d-flex justify-content-between align-items-center">
-  <h4>Total: ₱{calculateTotal()}</h4>
-  {/* Checkout Button */}
-  <Button
-    variant="primary"
-    onClick={handleCheckout}
-    style={{
-      backgroundColor: "#003366",
-      border: "none",
-    }}
-  >
-    Proceed to Checkout
-  </Button>
-</div>
-
+            {/* Aligning total and checkout button to the right */}
+            <div className="d-flex justify-content-end align-items-center">
+              <h4 style={{ marginRight: "20px" }}>Total: ₱{calculateTotal()}</h4>
+              <Button
+                variant="primary"
+                onClick={handleCheckout}
+                style={{
+                  backgroundColor: "#003366",
+                  border: "none",
+                }}
+              >
+                Proceed to Checkout
+              </Button>
+            </div>
           </>
         ) : (
           <p>Your cart is empty.</p>
