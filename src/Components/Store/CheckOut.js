@@ -12,9 +12,10 @@ function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("Cash on Delivery");
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isEditingPayment, setIsEditingPayment] = useState(false);
-  const [cartItems, setCartItems] = useState([]); // State to hold cart items
-  const [grandTotal, setGrandTotal] = useState(0); // State to hold grand total
-  const [showModal, setShowModal] = useState(false); // State to handle modal visibility
+  const [cartItems, setCartItems] = useState([]);
+  const [grandTotal, setGrandTotal] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState(""); // Added state for success message
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -33,8 +34,8 @@ function Checkout() {
     const fetchCartItems = async () => {
       try {
         const data = await cartService.getCarts();
-        setCartItems(data.items); // Set the fetched cart items
-        setGrandTotal(data.grand_total); // Set the grand total
+        setCartItems(data.items);
+        setGrandTotal(data.grand_total);
       } catch (error) {
         console.error("Error fetching cart items:", error);
       }
@@ -53,12 +54,18 @@ function Checkout() {
   };
 
   const handlePlaceOrder = () => {
-    console.log("Order placed successfully!");
-    setShowModal(false);
+    setSuccessMessage("Order placed successfully!"); // Set success message
+    setShowModal(false); // Hide modal
   };
 
   return (
     <div className="container py-4" style={{ color: "#003366" }}>
+      {successMessage && ( // Conditionally render the success message
+        <div className="alert alert-success text-center" role="alert">
+          {successMessage}
+        </div>
+      )}
+
       <div className="border-bottom mb-4">
         <h2 className="text-dark font-weight-bold">Delivery Information</h2>
         {isEditingAddress ? (
@@ -196,18 +203,17 @@ function Checkout() {
             </button>
           </div>
         ) : (
-          <div className="d-flex justify-content-start">
-            <p className="ms-5 me-5" style={{ fontSize: "1.2rem" }}>
-              {paymentMethod}
-            </p>
-            <button
-              onClick={handlePaymentChange}
-              className="btn btn-link text-dark p-0 me-5"
-              style={{ fontSize: "1rem" }}
-            >
-              Change
-            </button>
-          </div>
+       <div className="d-flex justify-content-between align-items-center ms-5 me-5">
+       <p style={{ fontSize: "1.2rem", marginBottom: "0" }}>{paymentMethod}</p>
+       <button
+    onClick={handlePaymentChange}
+    className="btn btn-link text-dark p-0"
+    style={{ fontSize: "1rem" }}
+    >
+      Change
+     </button>
+     </div>
+
         )}
       </div>
 
